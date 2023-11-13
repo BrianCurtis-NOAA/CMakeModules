@@ -4,7 +4,7 @@
 #
 # This module defines:
 #
-#   - comio::comio    - The udunits shared library and include directory, all in a single target.
+#   - COMIO    - The udunits shared library and include directory, all in a single target.
 #   - COMIO_STATIC_LIB  - The library
 #   - COMIO_INCLUDE_DIR - The include directory
 #   - COMIO_INCLUDES - The include directory
@@ -14,6 +14,13 @@
 #   - COMIO_INCLUDES & COMIO_LIBRARIES - folders containing comio.mod and libcomio, respectively.
 #   - COMIO_ROOT                 - root of COMIO installation
 #   - COMIO_PATH                 - root of COMIO installation
+find_library(COMIO_STATIC_LIB
+	NAMES libcomio.a
+	HINTS ${COMIO_LIBRARIES} $ENV{COMIO_LIBRARIES}
+	  ${COMIO_ROOT} $ENV{COMIO_ROOT}
+	  ${COMIO_PATH} $ENV{COMIO_PATH}
+	DOC "Path to libcomio"
+	)
 
 find_path (
 	COMIO_INCLUDES
@@ -24,24 +31,16 @@ find_path (
 	DOC "Path to comio.mod"
 	)
 
-find_library(COMIO_STATIC_LIB
-	NAMES libcomio.a
-	HINTS ${COMIO_LIBRARIES} $ENV{COMIO_LIBRARIES}
-	  ${COMIO_ROOT} $ENV{COMIO_ROOT}
-	  ${COMIO_PATH} $ENV{COMIO_PATH}
-	DOC "Path to libcomio"
-	)
-
 include (FindPackageHandleStandardArgs)
 find_package_handle_standard_args (COMIO DEFAULT_MSG COMIO_STATIC_LIB)
 find_package_handle_standard_args (COMIO DEFAULT_MSG COMIO_INCLUDES)
 
-mark_as_advanced (COMIO_INCLUDES)
 mark_as_advanced (COMIO_STATIC_LIB)
+mark_as_advanced (COMIO_INCLUDES)
 
-if(COMIO_FOUND AND NOT TARGET comio)
-	add_library(comio INTERFACE IMPORTED)
-	set_target_properties(comio PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${COMIO_INCLUDES})
-  set_target_properties(comio PROPERTIES INTERFACE_LINK_LIBRARIES ${COMIO_STATIC_LIB})
+if(COMIO_FOUND)
+	add_library(COMIO INTERFACE IMPORTED)
+	set_target_properties(COMIO PROPERTIES INTERFACE_LINK_LIBRARIES ${COMIO_STATIC_LIB})
+	set_target_properties(COMIO PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${COMIO_INCLUDES})
 endif()
 
