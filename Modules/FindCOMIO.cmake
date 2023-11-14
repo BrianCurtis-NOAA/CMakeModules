@@ -38,9 +38,13 @@ find_package_handle_standard_args (COMIO DEFAULT_MSG COMIO_INCLUDES)
 mark_as_advanced (COMIO_STATIC_LIB)
 mark_as_advanced (COMIO_INCLUDES)
 
+find_package(HDF5 REQUIRED COMPONENTS Fortran)
+
 if(COMIO_FOUND)
-	add_library(COMIO INTERFACE IMPORTED)
-	set_target_properties(COMIO PROPERTIES INTERFACE_LINK_LIBRARIES ${COMIO_STATIC_LIB})
-	set_target_properties(COMIO PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${COMIO_INCLUDES})
+	add_library(COMIO STATIC IMPORTED)
+	set_target_properties(COMIO PROPERTIES IMPORTED_LOCATION ${COMIO_STATIC_LIB}
+		                                     INTERFACE_LINK_LIBRARIES ${COMIO_STATIC_LIB}
+																				 INTERFACE_INCLUDE_DIRECTORIES ${COMIO_INCLUDES})
+	target_link_libraries(COMIO INTERFACE hdf5::hdf5_fortran)
 endif()
 
